@@ -49,6 +49,7 @@ class ElasticECSHandler(logging.Handler):
         BASIC_AUTH = 1
         KERBEROS_AUTH = 2
         AWS_SIGNED_AUTH = 3
+        API_KEY_AUTH = 4
 
     class IndexNameFrequency(Enum):
         """ Index type supported
@@ -164,9 +165,9 @@ class ElasticECSHandler(logging.Handler):
         :param hosts: The list of hosts that elasticsearch clients will connect. The list can be provided
                     in the format ```[{'host':'host1','port':9200}, {'host':'host2','port':9200}]``` to
                     make sure the client supports failover of one of the instertion nodes
-        :param auth_details: When ```ElasticECSHandler.AuthType.BASIC_AUTH``` is used this argument must contain
-                    a tuple of string with the user and password that will be used to authenticate against
-                    the Elasticsearch servers, for example```('User','Password')
+        :param auth_details: When ```ElasticECSHandler.AuthType.BASIC_AUTH``` or ```ElasticECSHandler.AuthType.API_KEY_AUTH```
+                    are used this argument must contain a tuple of string with the user and password
+                    that will be used to authenticate against the Elasticsearch servers, for example```('User','Password')
         :param aws_access_key: When ```ElasticECSHandler.AuthType.AWS_SIGNED_AUTH``` is used this argument must contain
                     the AWS key id of the  the AWS IAM user
         :param aws_secret_key: When ```ElasticECSHandler.AuthType.AWS_SIGNED_AUTH``` is used this argument must contain
@@ -174,7 +175,7 @@ class ElasticECSHandler(logging.Handler):
         :param aws_region: When ```ElasticECSHandler.AuthType.AWS_SIGNED_AUTH``` is used this argument must contain
                     the AWS region of the  the AWS Elasticsearch servers, for example```'us-east'
         :param auth_type: The authentication type to be used in the connection ```ElasticECSHandler.AuthType```
-                    Currently, NO_AUTH, BASIC_AUTH, KERBEROS_AUTH are supported
+                    Currently, NO_AUTH, BASIC_AUTH, KERBEROS_AUTH and API_KEY_AUTH are supported
                     You can pass a str instead of the enum value. It is useful if you are using a config file for
                     configuring the logging module.
         :param use_ssl: A boolean that defines if the communications should use SSL encrypted communication
@@ -299,6 +300,16 @@ class ElasticECSHandler(logging.Handler):
                     connection_class=RequestsHttpConnection,
                     serializer=self.serializer
                 )
+            return self._client
+
+        if self.auth_type == ElasticECSHandler.AuthType.API_KEY_AUTH:
+            if self._client is None:
+                return Elasticsearch(hosts=self.hosts,
+                                     api_key=self.auth_details,
+                                     use_ssl=self.use_ssl,
+                                     verify_certs=self.verify_certs,
+                                     connection_class=RequestsHttpConnection,
+                                     serializer=self.serializer)
             return self._client
 
         raise ValueError("Authentication method not supported")
