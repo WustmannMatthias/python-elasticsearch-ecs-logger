@@ -109,8 +109,8 @@ The constructors takes the following parameters:
     [{'host':'host1','port':9200}, {'host':'host2','port':9200}]
 
 
- - auth_type: The authentication currently support ElasticECSHandler.AuthType = NO_AUTH, BASIC_AUTH, KERBEROS_AUTH
- - auth_details: When ElasticECSHandler.AuthType.BASIC_AUTH is used this argument must contain a tuple of string with the user and password that will be used to authenticate against the Elasticsearch servers, for example ('User','Password')
+ - auth_type: The authentication currently support ElasticECSHandler.AuthType = NO_AUTH, BASIC_AUTH, KERBEROS_AUTH or API_KEY_AUTH
+ - auth_details: When ElasticECSHandler.AuthType.BASIC_AUTH or ElasticECSHandler.AuthType.API_KEY_AUTH are used this argument must contain a tuple of string with the user and password that will be used to authenticate against the Elasticsearch servers, for example ('User','Password')
  - aws_access_key: When ``ElasticECSHandler.AuthType.AWS_SIGNED_AUTH`` is used this argument must contain the AWS key id of the  the AWS IAM user
  - aws_secret_key: When ``ElasticECSHandler.AuthType.AWS_SIGNED_AUTH`` is used this argument must contain the AWS secret key of the  the AWS IAM user
  - aws_region: When ``ElasticECSHandler.AuthType.AWS_SIGNED_AUTH`` is used this argument must contain the AWS region of the  the AWS Elasticsearch servers, for example ``'us-east'``
